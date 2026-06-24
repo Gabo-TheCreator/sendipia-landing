@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sendipia — Join the waitlist</title>
+  <meta name="description" content="Sendipia builds and runs your company's entire marketing funnel — from strangers to sales. Join the waitlist." />
+  <style>
+    :root {
+      --paper: #fcfcfa; --panel: #ffffff; --soft: #f3f3ef; --line: #e6e6df;
+      --ink: #1a1a18; --muted: #6a6a64;
+      /* Polaroid — colores secos, planos */
+      --yellow: #e6b22e; --green: #3a9d5d; --red: #d6453a; --blue: #2d74bd;
+      --shadow: 0 10px 30px rgba(20,20,12,.08); --shadow-lg: 0 22px 56px rgba(20,20,12,.13);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--paper); color: var(--ink); min-height: 100vh;
+      font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+    .ic { stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; width: 1.05em; height: 1.05em; flex: 0 0 auto; }
+
+    .langsw { position: fixed; top: 18px; right: 20px; z-index: 50; display: flex; gap: 3px;
+      background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 4px; box-shadow: var(--shadow); }
+    .langsw button { font: inherit; font-size: 12px; font-weight: 700; letter-spacing: .4px; color: var(--muted); background: transparent; border: 0; padding: 7px 14px; border-radius: 999px; cursor: pointer; }
+    .langsw button.on { background: var(--ink); color: #fff; }
+
+    .hero { text-align: center; padding: 78px 0 58px; }
+    .brand { display: inline-flex; align-items: center; gap: 14px; margin-bottom: 34px; }
+    .logo { width: 96px; height: 34px; }
+    .logo circle { mix-blend-mode: multiply; }
+    .logo .c1 { fill: var(--yellow); } .logo .c2 { fill: var(--green); }
+    .logo .c3 { fill: var(--red); } .logo .c4 { fill: var(--blue); }
+    .brand .nm { font-size: 17px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; }
+    .badge { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
+      color: var(--ink); background: var(--soft); border: 1px solid var(--line); padding: 7px 15px; border-radius: 999px; margin-bottom: 22px; }
+    h1 { font-size: clamp(38px, 7vw, 64px); line-height: 1.04; letter-spacing: -2px; font-weight: 800; text-wrap: balance; }
+    h1 .hl { color: var(--blue); }
+    .sub { font-size: clamp(17px, 2.3vw, 21px); color: var(--muted); margin: 22px auto 0; max-width: 580px; line-height: 1.5; }
+
+    .form { margin: 36px auto 0; max-width: 480px; }
+    .row { display: flex; gap: 10px; }
+    .row input[type=email] { flex: 1; font: inherit; font-size: 16px; padding: 15px 18px; border-radius: 14px;
+      border: 1px solid var(--line); background: var(--panel); color: var(--ink); outline: none; transition: border-color .15s, box-shadow .15s; }
+    .row input[type=email]:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(45,116,189,.16); }
+    .row button { font: inherit; font-size: 16px; font-weight: 700; color: #fff; border: 0; cursor: pointer;
+      padding: 15px 24px; border-radius: 14px; background: var(--blue); white-space: nowrap; transition: transform .12s, filter .15s; }
+    .row button:hover { transform: translateY(-1px); filter: brightness(1.06); }
+    .row button:disabled { opacity: .6; cursor: default; transform: none; }
+    .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .reassure { font-size: 13.5px; color: var(--muted); margin-top: 14px; }
+    .msg { font-size: 14px; margin-top: 14px; min-height: 20px; font-weight: 600; }
+    .msg.err { color: var(--red); }
+    .success { display: none; margin: 36px auto 0; max-width: 480px; background: var(--panel); border: 1px solid var(--line);
+      border-radius: 18px; padding: 26px; box-shadow: var(--shadow-lg); text-align: center; }
+    .success .ck { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto 14px; background: var(--green); color: #fff; }
+    .success .ck .ic { width: 26px; height: 26px; stroke-width: 2.4; }
+    .success h3 { font-size: 21px; font-weight: 800; letter-spacing: -.4px; }
+    .success p { color: var(--muted); margin-top: 7px; font-size: 15px; }
+
+    .what { padding: 18px 0 70px; }
+    .what .t { text-align: center; font-size: clamp(22px, 3.4vw, 30px); font-weight: 800; letter-spacing: -.6px; margin-bottom: 30px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+    .card { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 24px 22px; box-shadow: var(--shadow); overflow: hidden; }
+    .card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: var(--c); }
+    .card .cic { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; color: #fff; background: var(--c); margin-bottom: 14px; }
+    .card .cic .ic { width: 22px; height: 22px; }
+    .card h4 { font-size: 17.5px; font-weight: 800; letter-spacing: -.3px; }
+    .card p { font-size: 14px; color: var(--muted); margin-top: 7px; line-height: 1.5; }
+    .k1 { --c: var(--red); } .k2 { --c: var(--yellow); } .k3 { --c: var(--green); }
+
+    footer { padding: 26px 0 50px; text-align: center; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
+    footer b { color: var(--ink); }
+  </style>
+</head>
+<body>
+
+  <div class="langsw">
+    <button id="btn-en" type="button">EN</button>
+    <button id="btn-es" type="button">ES</button>
+  </div>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="ic-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="ic-brand" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+    <symbol id="ic-reach" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M3 12s4-7 9-7 9 7 9 7-4 7-9 7-9-7-9-7z"/></symbol>
+    <symbol id="ic-sale" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></symbol>
+  </svg>
+
+  <header class="hero">
+    <div class="wrap">
+      <div class="brand">
+        <svg class="logo" viewBox="0 0 124 44" aria-label="Sendipia">
+          <circle class="c1" cx="22" cy="22" r="20"/><circle class="c2" cx="48" cy="22" r="20"/><circle class="c3" cx="74" cy="22" r="20"/><circle class="c4" cx="100" cy="22" r="20"/>
+        </svg>
+        <span class="nm">Sendipia</span>
+      </div>
+      <div><span class="badge" data-k="badge">Coming soon</span></div>
+      <h1 data-k="h1">Marketing that turns strangers into <span class="hl">customers</span>.</h1>
+      <p class="sub" data-k="sub">Sendipia builds and runs your company's entire marketing funnel — brand, content and the system that turns attention into sales. Powered by AI, crafted by humans.</p>
+
+      <form class="form" id="wl">
+        <input type="text" class="hp" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <div class="row">
+          <input type="email" id="email" name="email" required placeholder="you@company.com" autocomplete="email" />
+          <button type="submit" id="submit" data-k="btn">Join the waitlist</button>
+        </div>
+        <div class="reassure" data-k="reassure">Be first in line when we open. No spam — just early access.</div>
+        <div class="msg" id="msg" role="status"></div>
+      </form>
+
+      <div class="success" id="ok">
+        <div class="ck"><svg class="ic"><use href="#ic-check"/></svg></div>
+        <h3 data-k="okt">You're on the list.</h3>
+        <p data-k="okp">Thanks for joining — we'll reach out the moment we open.</p>
+      </div>
+    </div>
+  </header>
+
+  <section class="what">
+    <div class="wrap">
+      <div class="t" data-k="whatt">What we do for your company</div>
+      <div class="cards">
+        <div class="card k1">
+          <div class="cic"><svg class="ic"><use href="#ic-brand"/></svg></div>
+          <h4 data-k="c1t">A brand that sticks</h4>
+          <p data-k="c1p">One consistent visual identity, built from who you are and what you sell.</p>
+        </div>
+        <div class="card k2">
+          <div class="cic"><svg class="ic"><use href="#ic-reach"/></svg></div>
+          <h4 data-k="c2t">Content that gets you seen</h4>
+          <p data-k="c2p">Posts, campaigns and presence on the channels your market actually uses.</p>
+        </div>
+        <div class="card k3">
+          <div class="cic"><svg class="ic"><use href="#ic-sale"/></svg></div>
+          <h4 data-k="c3t">A funnel that sells</h4>
+          <p data-k="c3p">We turn attention into trust, and trust into paying customers.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer><div class="wrap" data-k="footer">sendipia.com — from strangers to sales.</div></footer>
+
+  <script>
+  (function () {
+    // 1) Pega aquí la URL del Web App de Google Apps Script (ver SETUP.md):
+    var ENDPOINT = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+    var ES = {
+      badge: "Muy pronto",
+      h1: 'Marketing que convierte extraños en <span class="hl">clientes</span>.',
+      sub: "Sendipia construye y opera todo el funnel de marketing de tu empresa — marca, contenido y el sistema que convierte la atención en ventas. Potenciado por IA, hecho por humanos.",
+      btn: "Unirme a la lista",
+      reassure: "Sé de los primeros cuando abramos. Sin spam — solo acceso anticipado.",
+      okt: "Estás en la lista.",
+      okp: "Gracias por sumarte — te escribimos apenas abramos.",
+      whatt: "Qué hacemos por tu empresa",
+      c1t: "Una marca que se recuerda", c1p: "Una identidad visual consistente, construida desde quién eres y qué vendes.",
+      c2t: "Contenido que te hace ver", c2p: "Posts, campañas y presencia en los canales que tu mercado realmente usa.",
+      c3t: "Un funnel que vende", c3p: "Convertimos la atención en confianza, y la confianza en clientes que pagan.",
+      footer: "sendipia.com — de desconocidos a ventas."
+    };
+    var PH = { en: "you@company.com", es: "tu@empresa.com" };
+
+    var nodes = document.querySelectorAll('[data-k]'), EN = {};
+    nodes.forEach(function (n) { if (EN[n.dataset.k] == null) EN[n.dataset.k] = n.innerHTML; });
+    var lang = 'en';
+    function set(l) {
+      lang = l;
+      nodes.forEach(function (n) { var v = l === 'es' ? ES[n.dataset.k] : EN[n.dataset.k]; if (v != null) n.innerHTML = v; });
+      document.documentElement.lang = l;
+      document.getElementById('email').placeholder = PH[l];
+      document.getElementById('btn-en').classList.toggle('on', l === 'en');
+      document.getElementById('btn-es').classList.toggle('on', l === 'es');
+      try { localStorage.setItem('sendipia-lang', l); } catch (e) {}
+    }
+    document.getElementById('btn-en').onclick = function () { set('en'); };
+    document.getElementById('btn-es').onclick = function () { set('es'); };
+    var saved = 'en'; try { saved = localStorage.getItem('sendipia-lang') || 'en'; } catch (e) {}
+    set(saved);
+
+    var form = document.getElementById('wl'), msg = document.getElementById('msg'),
+        btn = document.getElementById('submit'), ok = document.getElementById('ok');
+    function qp(k) { try { return new URLSearchParams(location.search).get(k) || ''; } catch (e) { return ''; } }
+
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      msg.textContent = ''; msg.className = 'msg';
+      if (form._gotcha.value) { form.style.display = 'none'; ok.style.display = 'block'; return; }
+      var email = document.getElementById('email').value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        msg.className = 'msg err'; msg.textContent = lang === 'es' ? 'Ingresa un correo válido.' : 'Please enter a valid email.';
+        return;
+      }
+      var payload = {
+        email: email, lang: lang, source: qp('utm_source') || qp('ref'),
+        utm: location.search || '', referrer: document.referrer || '', userAgent: navigator.userAgent || ''
+      };
+      btn.disabled = true; btn.textContent = lang === 'es' ? 'Enviando…' : 'Sending…';
+      function done() { form.style.display = 'none'; ok.style.display = 'block'; }
+      function fail() {
+        btn.disabled = false; btn.textContent = lang === 'es' ? 'Unirme a la lista' : 'Join the waitlist';
+        msg.className = 'msg err'; msg.textContent = lang === 'es' ? 'Algo falló. Intenta de nuevo.' : 'Something went wrong. Try again.';
+      }
+      if (ENDPOINT.indexOf('PASTE_YOUR') === 0) {
+        console.warn('[Sendipia] Waitlist endpoint not set. See SETUP.md. Payload:', payload);
+        done(); return;
+      }
+      fetch(ENDPOINT, { method: 'POST', body: JSON.stringify(payload) }).then(done).catch(fail);
+    });
+  })();
+  </script>
+</body>
+</html>
