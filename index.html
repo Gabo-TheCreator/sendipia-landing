@@ -48,6 +48,7 @@
     .row button:disabled { opacity: .6; cursor: default; transform: none; }
     .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
     .reassure { font-size: 13.5px; color: var(--muted); margin-top: 14px; }
+    .priv { font-size: 12px; color: var(--muted); margin-top: 9px; opacity: .85; }
     .msg { font-size: 14px; margin-top: 14px; min-height: 20px; font-weight: 600; }
     .msg.err { color: var(--red); }
     .success { display: none; margin: 36px auto 0; max-width: 480px; background: var(--panel); border: 1px solid var(--line);
@@ -105,6 +106,7 @@
           <button type="submit" id="submit" data-k="btn">Join the waitlist</button>
         </div>
         <div class="reassure" data-k="reassure">Be first in line when we open. No spam — just early access.</div>
+        <div class="priv" data-k="privacy">By joining, we collect basic device &amp; session data for analytics.</div>
         <div class="msg" id="msg" role="status"></div>
       </form>
 
@@ -143,8 +145,8 @@
 
   <script>
   (function () {
-    // 1) Pega aquí la URL del Web App de Google Apps Script (ver SETUP.md):
-    var ENDPOINT = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+    // Web App de Google Apps Script (waitlist → Google Sheet). Conectado 24-jun-2026.
+    var ENDPOINT = "https://script.google.com/macros/s/AKfycby0HiQc1j8gZdc2DoWPyfzTOWPQP0KUCiGY2YraPL2reSquzoRuORZSHphZH3s0gSiG/exec";
 
     var ES = {
       badge: "Muy pronto",
@@ -152,6 +154,7 @@
       sub: "Sendipia construye y opera todo el funnel de marketing de tu empresa — marca, contenido y el sistema que convierte la atención en ventas. Potenciado por IA, hecho por humanos.",
       btn: "Unirme a la lista",
       reassure: "Sé de los primeros cuando abramos. Sin spam — solo acceso anticipado.",
+      privacy: "Al inscribirte, recopilamos datos básicos de tu dispositivo y sesión para analítica.",
       okt: "Estás en la lista.",
       okp: "Gracias por sumarte — te escribimos apenas abramos.",
       whatt: "Qué hacemos por tu empresa",
@@ -181,7 +184,23 @@
 
     var form = document.getElementById('wl'), msg = document.getElementById('msg'),
         btn = document.getElementById('submit'), ok = document.getElementById('ok');
-    function qp(k) { try { return new URLSearchParams(location.search).get(k) || ''; } catch (e) { return ''; } }
+    function collectMetadata() {
+      var params = new URLSearchParams(location.search);
+      var utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+      var utm = utmKeys.filter(function (k) { return params.get(k); }).map(function (k) { return k + '=' + params.get(k); }).join('&');
+      return {
+        lang: navigator.language || '',
+        source: 'landing',
+        utm: utm,
+        referrer: document.referrer || 'direct',
+        userAgent: navigator.userAgent || '',
+        platform: navigator.platform || '',
+        screen: window.screen.width + 'x' + window.screen.height,
+        viewport: window.innerWidth + 'x' + window.innerHeight,
+        timezone: (Intl.DateTimeFormat().resolvedOptions().timeZone) || '',
+        pageUrl: location.href
+      };
+    }
 
     form.addEventListener('submit', function (ev) {
       ev.preventDefault();
@@ -192,21 +211,16 @@
         msg.className = 'msg err'; msg.textContent = lang === 'es' ? 'Ingresa un correo válido.' : 'Please enter a valid email.';
         return;
       }
-      var payload = {
-        email: email, lang: lang, source: qp('utm_source') || qp('ref'),
-        utm: location.search || '', referrer: document.referrer || '', userAgent: navigator.userAgent || ''
-      };
+      var payload = { email: email }, meta = collectMetadata();
+      for (var k in meta) payload[k] = meta[k];
       btn.disabled = true; btn.textContent = lang === 'es' ? 'Enviando…' : 'Sending…';
-      function done() { form.style.display = 'none'; ok.style.display = 'block'; }
+      function done() { document.getElementById('email').value = ''; form.style.display = 'none'; ok.style.display = 'block'; }
       function fail() {
         btn.disabled = false; btn.textContent = lang === 'es' ? 'Unirme a la lista' : 'Join the waitlist';
-        msg.className = 'msg err'; msg.textContent = lang === 'es' ? 'Algo falló. Intenta de nuevo.' : 'Something went wrong. Try again.';
+        msg.className = 'msg err'; msg.textContent = lang === 'es' ? 'Hubo un error, intenta de nuevo.' : 'Something went wrong. Try again.';
       }
-      if (ENDPOINT.indexOf('PASTE_YOUR') === 0) {
-        console.warn('[Sendipia] Waitlist endpoint not set. See SETUP.md. Payload:', payload);
-        done(); return;
-      }
-      fetch(ENDPOINT, { method: 'POST', body: JSON.stringify(payload) }).then(done).catch(fail);
+      // Apps Script Web App: no devuelve CORS legible → no-cors + text/plain (asume éxito si no lanza).
+      fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) }).then(done).catch(fail);
     });
   })();
   </script>
