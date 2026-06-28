@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sendipia — How it works</title>
+  <style>
+    :root {
+      --bg: #fcfcfa; --panel: #ffffff; --soft: #f3f3ef; --line: #e6e6df;
+      --ink: #1a1a18; --muted: #6a6a64;
+      --yellow: #e6b22e; --green: #3a9d5d; --red: #d6453a; --blue: #2d74bd;
+      --shadow: 0 10px 30px rgba(20,20,12,.08);
+      --shadow-lg: 0 22px 56px rgba(20,20,12,.13);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ink);
+      font: 18px/1.62 -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased; }
+    .wrap { max-width: 1300px; margin: 0 auto; padding: 0 24px; }
+    .ic { stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round;
+      width: 1.05em; height: 1.05em; vertical-align: -.16em; flex: 0 0 auto; }
+    .gt { color: var(--ink); font-weight: 800; }
+
+    /* reveal-on-scroll — smooth, professional */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 1.3s ease-in-out, transform 1s cubic-bezier(.16,.7,.2,1); will-change: opacity, transform; }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
+
+    .langsw { position: fixed; top: 18px; right: 20px; z-index: 50; display: flex; gap: 3px;
+      background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 4px; box-shadow: var(--shadow); }
+    .langsw button { font: inherit; font-size: 13px; font-weight: 700; letter-spacing: .4px; color: var(--muted);
+      background: transparent; border: 0; padding: 8px 15px; border-radius: 999px; cursor: pointer; }
+    .langsw button.on { background: var(--ink); color: #fff; }
+
+    .brand { display: inline-flex; align-items: center; gap: 13px; margin-bottom: 36px; text-decoration: none; color: inherit; transition: opacity .15s; }
+    .brand:hover { opacity: .72; }
+    .logo { width: 88px; height: 33px; }
+    .logo circle { mix-blend-mode: multiply; }
+    .logo circle:nth-of-type(1) { fill: var(--yellow); } .logo circle:nth-of-type(2) { fill: var(--green); }
+    .logo circle:nth-of-type(3) { fill: var(--red); } .logo circle:nth-of-type(4) { fill: var(--blue); }
+    .brand .nm { font-size: 19px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: var(--ink); }
+
+    .hero { position: relative; padding: 56px 0 16px; }
+    .hero h1 { font-size: clamp(46px, 7.5vw, 80px); line-height: 1.03; letter-spacing: -2.4px; font-weight: 800; text-wrap: balance; }
+    .hero h1 .hl { color: var(--blue); }
+    .hero .tagline { font-size: clamp(19px, 2.4vw, 24px); color: var(--muted); margin-top: 24px; line-height: 1.5; }
+
+    /* scroll cue — tells you there's more below */
+    .scrollcue { display: inline-flex; align-items: center; gap: 10px; margin-top: 24px;
+      font-size: 13px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); }
+    .scrollcue .chev { width: 20px; height: 20px; stroke-width: 2.4; animation: bob 1.8s ease-in-out infinite; }
+    @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+    @media (prefers-reduced-motion: reduce) { .scrollcue .chev { animation: none; } }
+
+    .lead { text-align: center; margin: 44px auto 44px; max-width: 960px; }
+    .lead .tag { font-size: 13px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; color: var(--muted); }
+    .lead h2 { font-size: clamp(29px, 4.4vw, 44px); font-weight: 800; letter-spacing: -.9px; margin-top: 14px; line-height: 1.1; }
+
+    /* Stages: spacious rows of [stage | deliverables], bigger type */
+    .stages { max-width: 1300px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 66px; }
+    .stage { display: grid; grid-template-columns: 380px 1fr; background: var(--panel);
+      border: 1px solid var(--line); border-top: 6px solid var(--c); border-radius: 26px;
+      box-shadow: var(--shadow); overflow: hidden; }
+    .stage-head { padding: 46px 40px; background: var(--tint); border-right: 1px solid var(--line);
+      display: flex; flex-direction: column; justify-content: center; }
+    .stage-head .bic { width: 58px; height: 58px; border-radius: 17px; display: grid; place-items: center;
+      background: var(--c); color: #fff; margin-bottom: 20px; }
+    .stage-head .bic .ic { width: 29px; height: 29px; }
+    .stage-head .code { font-size: 12.5px; font-weight: 800; letter-spacing: 2px; color: var(--c); }
+    .stage-head h3 { font-size: 35px; letter-spacing: -.8px; margin: 8px 0 20px; font-weight: 800; line-height: 1.06; }
+    .goal { background: var(--panel); border: 1px solid var(--line); border-left: 5px solid var(--c); border-radius: 14px; padding: 18px 20px; }
+    .goal .glab { font-size: 11.5px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--c); margin-bottom: 9px; }
+    .goal .gtxt { font-size: 19px; line-height: 1.5; color: var(--ink); font-weight: 500; }
+    .goal .gtxt b { font-weight: 800; color: var(--c); }
+
+    .stage-deliv { padding: 46px 46px; }
+    .stage-deliv .h { font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 26px; color: var(--c); }
+    .stage-deliv ul { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 28px 40px; }
+    .stage-deliv li { display: flex; gap: 13px; align-items: flex-start; line-height: 1.5; }
+    .stage-deliv li .ic { width: 20px; height: 20px; color: var(--c); margin-top: 3px; stroke-width: 2.2; }
+    .stage-deliv li b { font-weight: 700; font-size: 17.5px; color: var(--ink); }
+    .stage-deliv li small { color: var(--muted); display: block; font-size: 15px; margin-top: 4px; line-height: 1.5; }
+
+    /* stagger: deliverables ease in one by one when the stage arrives — calmer pace per stage */
+    .stage-deliv li { opacity: 0; transform: translateY(16px); transition: opacity 1s ease-in-out, transform .7s cubic-bezier(.16,.7,.2,1); }
+    .stage.in .stage-deliv li { opacity: 1; transform: none; }
+    .stage.in .stage-deliv li:nth-child(1) { transition-delay: .16s; }
+    .stage.in .stage-deliv li:nth-child(2) { transition-delay: .30s; }
+    .stage.in .stage-deliv li:nth-child(3) { transition-delay: .44s; }
+    .stage.in .stage-deliv li:nth-child(4) { transition-delay: .58s; }
+    @media (prefers-reduced-motion: reduce) { .stage-deliv li { opacity: 1 !important; transform: none !important; transition: none; } }
+
+    .s0 { --c: var(--yellow); --tint: rgba(230,178,46,.10); }
+    .s1 { --c: var(--green); --tint: rgba(58,157,93,.11); }
+    .s2 { --c: var(--red); --tint: rgba(214,69,58,.09); }
+    .s3 { --c: var(--blue); --tint: rgba(45,116,189,.09); }
+
+    .outcome { text-align: center; margin: 62px 0 8px; }
+    .outcome .pill { display: inline-flex; align-items: center; gap: 12px; font-size: 17.5px; font-weight: 800; color: #fff;
+      background: var(--green); padding: 18px 36px; border-radius: 999px; box-shadow: var(--shadow-lg); }
+    .outcome .pill .ic { width: 21px; height: 21px; }
+
+    .cierre { margin-top: 74px; background: var(--soft); border-top: 1px solid var(--line); }
+    .cierre .box { padding: 72px 30px; margin: 0 auto; max-width: 920px; text-align: center; }
+    .cierre .box p { font-size: clamp(23px, 3.1vw, 33px); font-weight: 800; line-height: 1.34; letter-spacing: -.6px; }
+    .cta { display: inline-flex; align-items: center; gap: 9px; margin-top: 34px; font: inherit; font-size: 18px; font-weight: 700;
+      color: #fff; background: var(--blue); text-decoration: none; padding: 18px 34px; border-radius: 15px; box-shadow: var(--shadow);
+      transition: transform .12s, filter .15s; }
+    .cta:hover { transform: translateY(-1px); filter: brightness(1.06); }
+    footer { padding: 36px 0 64px; color: var(--muted); font-size: 14px; text-align: center; background: var(--soft); }
+
+    @media (max-width: 860px) {
+      .wrap { padding: 0 20px; }
+      .hero { padding: 42px 0 8px; }
+      .hero .tagline { margin-top: 20px; }
+      .scrollcue { margin-top: 36px; }
+      .lead { margin: 60px auto 32px; }
+      .lead h2 { font-size: clamp(26px, 7vw, 34px); }
+      .stages { padding: 0 16px; gap: 40px; }
+      .stage { grid-template-columns: 1fr; border-radius: 22px; }
+      .stage-head { border-right: none; border-bottom: 1px solid var(--line); padding: 34px 26px; }
+      .stage-head h3 { font-size: 31px; }
+      .stage-head .bic { width: 52px; height: 52px; margin-bottom: 16px; }
+      .goal .gtxt { font-size: 18px; }
+      .stage-deliv { padding: 32px 26px; }
+      .stage-deliv ul { grid-template-columns: 1fr; gap: 22px; }
+      .stage-deliv .h { margin-bottom: 18px; }
+      .stage-deliv li b { font-size: 17px; }
+      .outcome { margin: 46px 0 6px; }
+      .cierre { margin-top: 56px; }
+      .cierre .box { padding: 54px 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="langsw">
+    <button id="btn-en" type="button">EN</button>
+    <button id="btn-es" type="button">ES</button>
+  </div>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="ic-layers" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+    <symbol id="ic-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="ic-bulb" viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></symbol>
+    <symbol id="ic-cart" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></symbol>
+    <symbol id="ic-dot" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="ic-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+    <symbol id="ic-chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
+  </svg>
+
+  <header class="hero">
+    <div class="wrap">
+      <a class="brand" href="index.html" aria-label="Volver a Sendipia">
+        <svg class="logo" viewBox="0 0 120 48" aria-label="Sendipia">
+          <circle cx="24" cy="24" r="22"/><circle cx="48" cy="24" r="22"/><circle cx="72" cy="24" r="22"/><circle cx="96" cy="24" r="22"/>
+        </svg>
+        <span class="nm">Sendipia</span>
+      </a>
+      <h1 data-k="h1">From <span class="hl">stranger</span> to <span class="hl">sale</span>.</h1>
+      <p class="tagline" data-k="tagline">People don't buy because they don't know you yet — not because the product is bad. Here's the path we build, stage by stage, and exactly what we deliver at each one.</p>
+    </div>
+  </header>
+
+  <div class="lead reveal">
+    <div class="tag" data-k="leadtag">The path, stage by stage</div>
+    <h2 data-k="leadh">Four stages. One clear goal each.</h2>
+    <div class="scrollcue"><span data-k="scrollcue">Scroll to walk the path</span> <svg class="chev ic"><use href="#ic-chev"/></svg></div>
+  </div>
+
+  <div class="stages">
+
+    <!-- Stage 1 -->
+    <div class="stage s0 reveal">
+      <div class="stage-head">
+        <span class="bic"><svg class="ic"><use href="#ic-layers"/></svg></span>
+        <div class="code" data-k="s0code">STAGE 1</div>
+        <h3 data-k="s0h">Understand your business</h3>
+        <div class="goal">
+          <div class="glab" data-k="glab">The goal of this stage</div>
+          <p class="gtxt" data-k="s0goal">Get <b>one consistent look and feel</b> ready — the base everything else is built on.</p>
+        </div>
+      </div>
+      <div class="stage-deliv">
+        <div class="h" data-k="svc_head">What we deliver in this stage</div>
+        <ul>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s0a"><b>Get to know your brand</b><small>Its vision, values and what it wants to express</small></span></li>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s0b"><b>Get to know your product</b><small>What it is, who it's for and what it promises</small></span></li>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s0c"><b>Visual identity</b><small>One consistent language: color, type, components and voice</small></span></li>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s0d"><b>Channels &amp; measurement</b><small>Accounts ready, plus measurement and auto-posting</small></span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Stage 2 -->
+    <div class="stage s1 reveal">
+      <div class="stage-head">
+        <span class="bic"><svg class="ic"><use href="#ic-eye"/></svg></span>
+        <div class="code" data-k="s1code">STAGE 2</div>
+        <h3 data-k="s1h">Get noticed</h3>
+        <div class="goal">
+          <div class="glab" data-k="glab">The goal of this stage</div>
+          <p class="gtxt" data-k="s1goal">Take your ideal customer from <b>not knowing you</b> to <b>knowing you exist</b>.</p>
+        </div>
+      </div>
+      <div class="stage-deliv">
+        <div class="h" data-k="svc_head">What we deliver in this stage</div>
+        <ul>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s1a"><b>Content production</b><small>Posts, carousels and short videos / reels</small></span></li>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s1b"><b>Professional photo &amp; real content</b><small>Shows the product or person at its best</small></span></li>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s1c"><b>Social media management</b><small>Consistent presence on the channels your market uses</small></span></li>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s1d"><b>Paid ads</b><small>Ads on Meta / TikTok, set up and managed for reach</small></span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Stage 3 -->
+    <div class="stage s2 reveal">
+      <div class="stage-head">
+        <span class="bic"><svg class="ic"><use href="#ic-bulb"/></svg></span>
+        <div class="code" data-k="s2code">STAGE 3</div>
+        <h3 data-k="s2h">Earn trust</h3>
+        <div class="goal">
+          <div class="glab" data-k="glab">The goal of this stage</div>
+          <p class="gtxt" data-k="s2goal">Move them from <b>knowing you</b> to <b>understanding and trusting you</b>.</p>
+        </div>
+      </div>
+      <div class="stage-deliv">
+        <div class="h" data-k="svc_head">What we deliver in this stage</div>
+        <ul>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s2a"><b>A clear web page</b><small>Your offer, benefits and the answers to common questions</small></span></li>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s2b"><b>Helpful, educational content</b><small>Proves you know your craft and builds connection</small></span></li>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s2c"><b>Capture interested people</b><small>Form / WhatsApp so they can raise their hand</small></span></li>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s2d"><b>Email follow-up</b><small>Stays in touch so you keep top of mind</small></span></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Stage 4 -->
+    <div class="stage s3 reveal">
+      <div class="stage-head">
+        <span class="bic"><svg class="ic"><use href="#ic-cart"/></svg></span>
+        <div class="code" data-k="s3code">STAGE 4</div>
+        <h3 data-k="s3h">Win the sale</h3>
+        <div class="goal">
+          <div class="glab" data-k="glab">The goal of this stage</div>
+          <p class="gtxt" data-k="s3goal">Turn that understanding into a decision: <b>the purchase</b>.</p>
+        </div>
+      </div>
+      <div class="stage-deliv">
+        <div class="h" data-k="svc_head">What we deliver in this stage</div>
+        <ul>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s3a"><b>Assisted close</b><small>A conversation that resolves the final doubts</small></span></li>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s3b"><b>A simple way to buy</b><small>Guided if they need help, direct if they don't</small></span></li>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s3c"><b>Automatic follow-up</b><small>Brings back the undecided on its own</small></span></li>
+          <li><svg class="ic"><use href="#ic-dot"/></svg> <span data-k="s3d"><b>Results &amp; reports</b><small>How many people became customers</small></span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="outcome reveal">
+    <span class="pill"><svg class="ic"><use href="#ic-star"/></svg> <span data-k="outcome">A new paying customer</span></span>
+  </div>
+
+  <section class="cierre">
+    <div class="box reveal">
+      <p data-k="closing">Each stage has a clear goal and concrete results — so you always know <span class="gt">what's being built and where each person stands</span> on the way to buying.</p>
+      <a class="cta" href="index.html" data-k="cta">Join the waitlist <span aria-hidden="true">&rarr;</span></a>
+    </div>
+  </section>
+
+  <footer><div class="wrap" data-k="footer">Sendipia — How we work: from strangers to sales.</div></footer>
+
+  <script>
+  (function () {
+    var ES = {
+      h1: 'De <span class="hl">desconocido</span> a <span class="hl">venta</span>.',
+      tagline: "La gente no compra porque todavía no te conoce — no porque el producto sea malo. Este es el camino que construimos, etapa por etapa, y exactamente qué entregamos en cada una.",
+      scrollcue: "Desliza para recorrer el camino",
+      leadtag: "El camino, etapa por etapa", leadh: "Cuatro etapas. Un objetivo claro en cada una.",
+      svc_head: "Qué entregamos en esta etapa",
+      glab: "El objetivo de esta etapa",
+      s0code: "ETAPA 1", s0h: "Entender tu empresa y producto",
+      s0goal: 'Dejar lista <b>una imagen coherente</b> — la base sobre la que se construye todo lo demás.',
+      s0a: "<b>Conocer tu marca</b><small>Su visión, valores y lo que quiere expresar</small>",
+      s0b: "<b>Conocer tu producto</b><small>Qué es, para quién es y qué promete</small>",
+      s0c: "<b>Identidad visual</b><small>Un solo lenguaje: color, tipografía, componentes y voz</small>",
+      s0d: "<b>Canales y medición</b><small>Cuentas listas, más medición y publicación automática</small>",
+      s1code: "ETAPA 2", s1h: "Que te conozcan",
+      s1goal: 'Llevar a tu cliente ideal de <b>no conocerte</b> a <b>saber que existes</b>.',
+      s1a: "<b>Producción de contenido</b><small>Posts, carruseles y videos cortos / reels</small>",
+      s1b: "<b>Foto profesional y contenido real</b><small>Muestra el producto o la persona en su mejor versión</small>",
+      s1c: "<b>Gestión de redes</b><small>Presencia consistente en los canales que usa tu mercado</small>",
+      s1d: "<b>Anuncios pagados</b><small>Anuncios en Meta / TikTok, configurados y gestionados para alcance</small>",
+      s2code: "ETAPA 3", s2h: "Que te entiendan",
+      s2goal: 'Llevarlo de <b>conocerte</b> a <b>entenderte y confiar en ti</b>.',
+      s2a: "<b>Una página web clara</b><small>Tu oferta, beneficios y las respuestas a las dudas comunes</small>",
+      s2b: "<b>Contenido útil y educativo</b><small>Demuestra que sabes de lo tuyo y genera conexión</small>",
+      s2c: "<b>Captar a los interesados</b><small>Formulario / WhatsApp para que levanten la mano</small>",
+      s2d: "<b>Seguimiento por email</b><small>Se mantiene en contacto para que sigas presente</small>",
+      s3code: "ETAPA 4", s3h: "Que te compren",
+      s3goal: 'Convertir ese entendimiento en una decisión: <b>la compra</b>.',
+      s3a: "<b>Cierre acompañado</b><small>Una conversación que resuelve las últimas dudas</small>",
+      s3b: "<b>Una forma simple de comprar</b><small>Guiado si necesitan ayuda, directo si no</small>",
+      s3c: "<b>Seguimiento automático</b><small>Recupera a los indecisos por su cuenta</small>",
+      s3d: "<b>Resultados y reportes</b><small>Cuántas personas se volvieron clientes</small>",
+      outcome: "Un nuevo cliente que paga",
+      closing: 'Cada etapa tiene una meta clara y resultados concretos — así siempre sabes <span class="gt">qué se está construyendo y en qué punto está cada persona</span> camino a la compra.',
+      cta: 'Unirme a la lista <span aria-hidden="true">&rarr;</span>',
+      footer: "Sendipia — Cómo trabajamos: de desconocidos a ventas."
+    };
+    var nodes = document.querySelectorAll('[data-k]'), EN = {};
+    nodes.forEach(function (n) { if (EN[n.dataset.k] == null) EN[n.dataset.k] = n.innerHTML; });
+    function set(lang) {
+      nodes.forEach(function (n) { var v = lang === 'es' ? ES[n.dataset.k] : EN[n.dataset.k]; if (v != null) n.innerHTML = v; });
+      document.documentElement.lang = lang;
+      document.getElementById('btn-en').classList.toggle('on', lang === 'en');
+      document.getElementById('btn-es').classList.toggle('on', lang === 'es');
+      try { localStorage.setItem('sendipia-lang', lang); } catch (e) {}
+    }
+    document.getElementById('btn-en').addEventListener('click', function () { set('en'); });
+    document.getElementById('btn-es').addEventListener('click', function () { set('es'); });
+    var saved = null; try { saved = localStorage.getItem('sendipia-lang'); } catch (e) {}
+    if (!saved) {
+      var navs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || 'es'];
+      saved = navs.some(function (l) { return /^en/i.test(l); }) ? 'en' : 'es';  // por defecto español; inglés solo si el dispositivo está en inglés
+    }
+    set(saved);
+
+    // reveal-on-scroll: each block eases in as you reach it (the natural reading guide)
+    var blocks = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      blocks.forEach(function (el) { el.classList.add('in'); });
+    } else {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { e.target.classList.toggle('in', e.isIntersecting); });  // discover al entrar, off-discover al salir (re-anima al volver)
+      }, { threshold: 0.16, rootMargin: '0px 0px -8% 0px' });
+      blocks.forEach(function (el) { io.observe(el); });
+    }
+  })();
+  </script>
+</body>
+</html>
